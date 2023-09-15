@@ -1,0 +1,67 @@
+classe ponto:
+    coordenada x;
+    coordenada y;
+
+classe retangulo:
+    int base
+    int altura
+
+    inicia_retangulo(int base_init,int altura_init)
+        base = base = base_init
+        altura_init
+
+    obter_area()
+        retornar base * altura
+    obter_perimetro()
+        retornar 2 * base + 2 * altura
+    eh_quadrado()
+        se base == altura
+            retornar true
+        senao
+            retornar false
+
+classe triangulo:
+
+    #seria interessante colocar um construtor
+    int lado_a
+    int lado_b
+    int lado_c
+    
+    
+    # formula de Heron
+    obter_area()
+        semiperimetro = (a + b + c)/2
+        area = raiz(semiperimetro * (semiperimetro-a) * (semiperimetro - b) * (semiperimetro - c))
+        retornar area
+
+    obter_altura(int lado_base)
+        retornar obter_area/lado_base
+        
+    obter_perimetro()
+        retornar lado_a + lado_b + lado_c
+    obter_tipo()
+        soma_dos_quadrados = lado_b * lado_b + lado_c * lado_c
+        se lado_a = soma_dos_quadrados
+            imprimir("Triangulo retângulo")
+        senao se lado_a < soma_dos_quadrados
+            imprimir("Triangulo acutângulo")
+        senao se lado_a >  soma_dos_quadrados
+            imprimir("Triângulo obtusangulo")
+        senao se lado_a == lado_b e lado_b == lado_c
+            imprimir("Triangulo equilátero")
+
+
+classe losangulo
+    int diagonal_maior
+    int diagonal_menor
+
+    obter_altura()
+
+classe circulo
+    int raio
+
+    obter_area()
+        retornar 2 * PI * raio * raio
+    obter_circunferencia()
+        retornar 2 * PI * raio
+    
