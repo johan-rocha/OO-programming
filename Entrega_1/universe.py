@@ -5,24 +5,27 @@ from math import *
 
 class Ponto():
     def __init__(self, x_point, y_point):
-        self.__x = x_point
-        self.__y = y_point
+        self._x = x_point
+        self._y = y_point
     def show_coordinates(self):
-        print(f'coordinate point = ({self.__x},{self.__y})')
-    def distancia_deste_ponto(self, other_x, other_y) -> float:
-         return abs(sqrt(((other_x - self.__x)**2) + ((other_y - self.__y)**2)))
+        print(f'coordinate point = ({self._x},{self._y})')
 
+    def distancia_deste_ponto(self, other_x, other_y) -> float:
+        return abs(sqrt(((other_x - self._x)**2) + ((other_y - self._y)**2)))
+    
 class Reta(Ponto):
-     def __init__(self, ):
-          pass
-         
+    def __init__(self, x_1, y_1, x_2, y_2):
+          self._ponto_1 = Ponto(x_1, y_1)
+          self._ponto_2 = Ponto(x_2, y_2)
+    def comprimento_reta(self):
+        return self._ponto_1.distancia_deste_ponto(self._ponto_2._x, self._ponto_2._y)
 
 class Retangulo():
     def __init__(self, base_init, altura_init):
         self.__base = base_init
         self.__altura = altura_init
 
-    def get_base(self) -> int: 
+    def get_base(self) -> int:
         return self.__base
     
     def get_altura(self) -> int:
@@ -48,8 +51,8 @@ class Triangulo():
     # Formula de Heron
     def get_area(self) -> int:
         semiperimetro = (self.__lado_a + self.__lado_b + self.__lado_c)/2
-
         area = sqrt(semiperimetro * (semiperimetro - self.__lado_a) * (semiperimetro - self.__lado_b) * (semiperimetro - self.__lado_c))
+        return area
     
     def get_altura_relativa(self, lado_base) -> int:
         return self.get_area()/lado_base
@@ -58,7 +61,7 @@ class Triangulo():
         return self.__lado_a + self.__lado_b + self.__lado_c
     
     #pela lei dos cossenos
-    def mostrar_tipo(self): 
+    def mostrar_tipo(self):
         soma_dos_quadrados = self.__lado_b * self.__lado_b + self.__lado_c * self.__lado_c
 
         if(self.__lado_a == soma_dos_quadrados):
@@ -68,7 +71,7 @@ class Triangulo():
         elif(self.__lado_a > soma_dos_quadrados):
                 print("Triangulo obstusângulo\n")
         elif(self.__lado_a == self.__lado_b and self.__lado_b == self.__lado_c):
-                print("Triangulo equilátero\n") 
+                print("Triangulo equilátero\n")
 
 class Losango():
     def __init__(self, diagonal_maior, diagonal_menor):
@@ -76,8 +79,13 @@ class Losango():
          self.__diagonal_menor = diagonal_menor
     def get_area(self):
          return self.__diagonal_maior * self.__diagonal_menor/2.0
+    def get_lado(self):
+         lado = sqrt((self.__diagonal_maior/2.0)**2 + (self.__diagonal_menor/2.0)**2) #teorema de pitagoras
+         return lado
     def get_altura(self):
-         pass
+         return self.get_area()/self.get_lado()
+    def get_perimetro(self):
+         return 4 * self.get_lado()
 
 class Circulo():
     def __init__(self, raio):
@@ -88,13 +96,14 @@ class Circulo():
 
     def get_area(self):
          return pi * self.__raio**2
+    
     def get_circunferencia(self):
         return 2 * pi * self.__raio
     
 
 def main():
-     circ1 = Circulo(15)
-     print(f'Area do circulo de raio {circ1.get_raio()} = {circ1.get_area()}')
+     reta = Reta(10, 10, 20, 20)
+     print(f'O comprimento da reta = {reta.comprimento_reta()}')
      
 if __name__ == "__main__":
     main()

@@ -1,1 +1,1 @@
-Initial repository
+Repositório dedicado à disciplina de Orientação à Objetos
