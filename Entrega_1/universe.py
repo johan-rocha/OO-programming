@@ -17,6 +17,7 @@ class Reta(Ponto):
     def __init__(self, x_1, y_1, x_2, y_2):
           self._ponto_1 = Ponto(x_1, y_1)
           self._ponto_2 = Ponto(x_2, y_2)
+
     def comprimento_reta(self):
         return self._ponto_1.distancia_deste_ponto(self._ponto_2._x, self._ponto_2._y)
 
@@ -48,6 +49,7 @@ class Triangulo():
         self.__lado_a = lado_a_input
         self.__lado_b = lado_b_input
         self.__lado_c = lado_c_input
+
     # Formula de Heron
     def get_area(self) -> int:
         semiperimetro = (self.__lado_a + self.__lado_b + self.__lado_c)/2
@@ -77,13 +79,17 @@ class Losango():
     def __init__(self, diagonal_maior, diagonal_menor):
          self.__diagonal_maior = diagonal_maior
          self.__diagonal_menor = diagonal_menor
+
     def get_area(self):
          return self.__diagonal_maior * self.__diagonal_menor/2.0
+    
     def get_lado(self):
          lado = sqrt((self.__diagonal_maior/2.0)**2 + (self.__diagonal_menor/2.0)**2) #teorema de pitagoras
          return lado
+    
     def get_altura(self):
          return self.get_area()/self.get_lado()
+    
     def get_perimetro(self):
          return 4 * self.get_lado()
 
