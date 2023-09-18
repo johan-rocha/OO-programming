@@ -54,14 +54,14 @@ classe triangulo:
 classe losangulo
     int diagonal_maior
     int diagonal_menor
-
+    
     obter_area()
         retornar (diagonal_maior * diagonal_menor)/2
     obter_altura()
 
 classe circulo
     int raio
-    
+
     obter_area()
         retornar 2 * PI * raio * raio
     obter_circunferencia()
