@@ -64,46 +64,43 @@ class Triangulo():
     
     #pela lei dos cossenos
     def mostrar_tipo(self):
-        soma_dos_quadrados = self.__lado_b * self.__lado_b + self.__lado_c * self.__lado_c
 
-        if(self.__lado_a == soma_dos_quadrados):
-                print("Trigulo Retângulo\n")
-        elif(self.__lado_a < soma_dos_quadrados):
-                print("Triangulo acutângulo\n")
-        elif(self.__lado_a > soma_dos_quadrados):
-                print("Triangulo obstusângulo\n")
-        elif(self.__lado_a == self.__lado_b and self.__lado_b == self.__lado_c):
+        if(self.__lado_a == self.__lado_b and self.__lado_b == self.__lado_c):
                 print("Triangulo equilátero\n")
+        elif(self.__lado_a == self.__lado_b or self.__lado_a == self.__lado_c or self.__lado_b == self.__lado_c):
+                print("Trigulo isosceles\n")
+        else:
+                print("Triangulo escaleno\n")
 
 class Losango():
     def __init__(self, diagonal_maior, diagonal_menor):
          self.__diagonal_maior = diagonal_maior
          self.__diagonal_menor = diagonal_menor
 
-    def get_area(self):
+    def get_area(self) -> float:
          return self.__diagonal_maior * self.__diagonal_menor/2.0
     
-    def get_lado(self):
+    def get_lado(self) -> float:
          lado = sqrt((self.__diagonal_maior/2.0)**2 + (self.__diagonal_menor/2.0)**2) #teorema de pitagoras
          return lado
     
-    def get_altura(self):
+    def get_altura(self) -> float:
          return self.get_area()/self.get_lado()
     
-    def get_perimetro(self):
+    def get_perimetro(self) -> float:
          return 4 * self.get_lado()
 
 class Circulo():
     def __init__(self, raio):
         self.__raio = raio
 
-    def get_raio(self):
+    def get_raio(self) -> int:
          return self.__raio
 
-    def get_area(self):
+    def get_area(self) -> float:
          return pi * self.__raio**2
     
-    def get_circunferencia(self):
+    def get_circunferencia(self) -> float:
         return 2 * pi * self.__raio
     
 
