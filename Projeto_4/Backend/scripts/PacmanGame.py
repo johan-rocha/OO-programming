@@ -11,8 +11,6 @@ pygame.font.init()
 width = 640
 height = 480
 
-x_pos = width/2
-y_pos = height/2
 x_obstaculo = randint(40, 600)
 y_obstaculo = randint(50, 430)
 
@@ -28,7 +26,7 @@ pacman = Pacman(screen)
 
 while True:
     
-    clock.tick(30) #taxa de atualização
+    clock.tick(8) #taxa de atualização
     screen.fill((0, 0, 0)) #tela preenchida pela cor preta, atualizar tela
     mensagem = f'Score: {score}' #message score text
     texto_formatado = fonte.render(mensagem, True, (255, 255, 255)) #score text
@@ -41,18 +39,13 @@ while True:
         
         if event.type == KEYDOWN:
             if event.key == K_a:
-                #direction 0
                 pacman.setDirection(0)
-            if event.key == K_w:
-                #direction 1
+            if event.key == K_w:        
                 pacman.setDirection(1)
             if event.key == K_d:
-                #direction 2
                 pacman.setDirection(2)
             if event.key == K_s:
-                #direction 3
                 pacman.setDirection(3)
-        pacman.move()
         """
         if pygame.key.get_pressed()[K_a]:
             x_pos -= 20
@@ -63,10 +56,11 @@ while True:
         if pygame.key.get_pressed()[K_s]:
             y_pos += 20
         """
-
+    pacman.move()
+    pacman.pacman_ref_geometry = pygame.draw.circle(screen, pacman.getColor(), pacman.getPosition(), 12)
     obstaculo = pygame.draw.rect(screen, (255,0,0), (x_obstaculo,y_obstaculo,40,50))
 
-    if(obstaculo.colliderect(pacman)):
+    if(obstaculo.colliderect(pacman.pacman_ref_geometry)):
         x_obstaculo = randint(40, 600)
         y_obstaculo = randint(50, 430)
         score+=1

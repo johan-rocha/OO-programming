@@ -1,6 +1,7 @@
 import abc #Abstract Base Classes
 import pygame
 from pygame.locals import *
+from pygame.surface import Surface
 
 
 
@@ -20,10 +21,11 @@ class Characters(abc.ABC): #abstract class
         self._speed = value
 
 class Pacman(Characters): #definir classe
-    def __init__(self, surface: pygame.Surface):
+    def __init__(self, surface: Surface):
+        super().__init__()
         self.__x_pacman = surface.get_width()/2
         self.__y_pacman = surface.get_height()/2 #initial position / TALVEZ APAGAR
-        self.__pacman_geometry = pygame.draw.circle(surface, self._color, (self.__x_pacman, self.__y_pacman), 12) #muito provavel de apagar
+        self.pacman_ref_geometry = 0 #muito provavel de apagar
         self._color = (244, 206, 14)
 
     def move(self) -> None:
@@ -31,30 +33,22 @@ class Pacman(Characters): #definir classe
             pass
         elif(self._direction == 0):
             self.__x_pacman -= self._speed
-            self.__y_pacman = 0
         elif(self._direction == 1):
             self.__y_pacman -= self._speed
-            self.__x_pacman = 0
         elif(self._direction == 2):
             self.__x_pacman += self._speed
-            self.__y_pacman = 0
         elif(self._direction == 3):
             self.__y_pacman += self._speed
-            self.__x_pacman = 0
 
-    @property
-    def getGeometry(self):
-        return self.__pacman_geometry
+    def getPosition(self):
+        return self.__x_pacman, self.__y_pacman
+    
+    def getColor(self):
+        return self._color
 
-    @getGeometry.setter
-    def setGeometry(self, surface: pygame.Surface, radius: float=12):
-        self.__pacman_geometry = pygame.draw.circle(surface, self._color, (self.__x_pacman, self.__y_pacman), radius)
-
-    @property
     def getDirection(self):
         return self._direction
     
-    @getDirection.setter
     def setDirection(self, value):
         self._direction = value
 
