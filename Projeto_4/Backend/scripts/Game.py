@@ -2,24 +2,24 @@
 # _*_ coding: utf-8 _*_
 
 import time #verificar funcionamento dessa funcao
-import pygame
+import pygame, Characters
 from pygame.locals import *
 from sys import exit
 
 class Game():
 
     def __init__(self):
-        self.lives = 3
-        pellets = Pellets() #definir parametros
-        pacman = Pacman() #definir parametros
-        ghost = []
-        score = 0
-        timer = 0
-        attribute20 = 0
+        self.__lives = 3
+        self.__pacman = Pacman() #definir parametros
+        self.__pellets = Pellets() #definir parametros
+        self.__ghost = []
+        self.__score = 0
+        self.__timer = 0
+        self.__attribute20 = 0
     
     def move() -> None:
         pass
-    
+
     def pelletsEaten() -> int:
         pass
 
