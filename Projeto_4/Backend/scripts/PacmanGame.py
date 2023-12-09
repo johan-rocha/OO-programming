@@ -5,6 +5,7 @@ from random import randint
 from Game import *
 from Characters import *
 
+
 pygame.init()
 pygame.font.init()
 
@@ -22,7 +23,8 @@ score = 0
 fonte = pygame.font.SysFont('liberationmono', 30, True, False) #config text
 #verify fonts: pygame.font.get_fonts()
 
-pacman = Pacman(screen)
+pacman = Pacman("cleitin", screen)
+purple_ghost = Ghost(screen, (113, 29, 176))
 
 while True:
     
@@ -30,6 +32,9 @@ while True:
     screen.fill((0, 0, 0)) #tela preenchida pela cor preta, atualizar tela
     mensagem = f'Score: {score}' #message score text
     texto_formatado = fonte.render(mensagem, True, (255, 255, 255)) #score text
+
+
+
 
 
     for event in pygame.event.get():
@@ -56,11 +61,19 @@ while True:
         if pygame.key.get_pressed()[K_s]:
             y_pos += 20
         """
+
+
+
+    purple_ghost.move()
+    purple_ghost.ref_geometry = pygame.draw.circle(screen, purple_ghost.getColor(), purple_ghost.getPosition(), 15)
+
     pacman.move()
-    pacman.pacman_ref_geometry = pygame.draw.circle(screen, pacman.getColor(), pacman.getPosition(), 12)
+    pacman.ref_geometry = pygame.draw.circle(screen, pacman.getColor(), pacman.getPosition(), 12)
+
+
     obstaculo = pygame.draw.rect(screen, (255,0,0), (x_obstaculo,y_obstaculo,40,50))
 
-    if(obstaculo.colliderect(pacman.pacman_ref_geometry)):
+    if(obstaculo.colliderect(pacman.ref_geometry)):
         x_obstaculo = randint(40, 600)
         y_obstaculo = randint(50, 430)
         score+=1
