@@ -21,10 +21,11 @@ class Characters(abc.ABC): #abstract class
         self._speed = value
 
 class Pacman(Characters): #definir classe
-    def __init__(self, surface: Surface):
+    def __init__(self, surf: Surface):
         super().__init__()
-        self.__x_pacman = surface.get_width()/2
-        self.__y_pacman = surface.get_height()/2 #initial position / TALVEZ APAGAR
+        self.__surface = surf
+        self.__x_pacman = surf.get_width()/2
+        self.__y_pacman = surf.get_height()/2 #initial position / TALVEZ APAGAR
         self.pacman_ref_geometry = 0 #muito provavel de apagar
         self._color = (244, 206, 14)
 
@@ -39,6 +40,8 @@ class Pacman(Characters): #definir classe
             self.__x_pacman += self._speed
         elif(self._direction == 3):
             self.__y_pacman += self._speed
+        self.__x_pacman %= self.__surface.get_width() #teleport character
+        self.__y_pacman %= self.__surface.get_height()
 
     def getPosition(self):
         return self.__x_pacman, self.__y_pacman
