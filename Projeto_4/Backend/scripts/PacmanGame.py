@@ -1,14 +1,17 @@
 import pygame
 from pygame.locals import *
 from sys import exit
+import os
 from random import randint
 from Game import *
 from Characters import *
 
+main_dir = os.path.dirname(__file__)
+images_dir = os.path.join(main_dir, "images")
+sound_dir = os.path.dirname(main_dir, "sounds")
 
 pygame.init()
 pygame.font.init()
-
 width = 640
 height = 480
 
@@ -23,8 +26,10 @@ score = 0
 fonte = pygame.font.SysFont('liberationmono', 30, True, False) #config text
 #verify fonts: pygame.font.get_fonts()
 
-pacman = Pacman("cleitin", screen)
-purple_ghost = Ghost(screen, (113, 29, 176))
+sprite_sheet = pygame.image.load(os.path.join(images_dir, 'pacman_sprite.png')).convert_alpha()
+
+pacman = Pacman("cleitin", screen, sprite_sheet)
+purple_ghost = Ghost((113, 29, 176), screen, sprite_sheet)
 
 while True:
     
@@ -78,5 +83,5 @@ while True:
         y_obstaculo = randint(50, 430)
         score+=1
     screen.blit(texto_formatado, (450, 20)) #text
-    pygame.display.update()
+    pygame.display.flip()
 
