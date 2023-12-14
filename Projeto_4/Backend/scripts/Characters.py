@@ -8,8 +8,7 @@ import constants
 class GameSprites(abc.ABC):
 
     @abc.abstractmethod
-    def __init__(self, sprite : Surface,vector_of_initial_positions : list[tuple[int, int]],
-                  sprite_size : tuple[int, int], scale : float=1.0):
+    def __init__(self, sprite : Surface,vector_of_initial_positions : list[tuple[int, int]], sprite_size : tuple[int, int], scale : float=1.0):
         
         self._to_build_sprite_sheet = sprite
         self._sprite_images_vector = []
@@ -48,8 +47,11 @@ class Characters(abc.ABC): #abstract class
         self.__coordinates[1] %= self.__surface.get_height()
 
     #ver como funciona, usando como exemplo
-    def setSpeed(self, value):
+    def setSpeed(self, value=10):
         self.__speed = value
+    
+    def getSpeed(self):
+        return self.__speed
 
     def getDirection(self):
         return self.__direction
@@ -84,15 +86,20 @@ class Pacman(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
 
         self.__index_eat = 0
         self.__sprite_vector_eat = [(1, 5, 8, 5), (2, 6, 8, 6), (0, 4, 8, 4), (3, 7, 8, 7)]
+        self.__update_sprite_factor = 0
 
     def update(self): #update method is necessary for pygame.sprite
-        self.__index_sprites = self.eatAnim()
+        if(not self.__update_sprite_factor % (constants.FACTOR_SPEED_SPRITE * self.getSpeed())): #animation depends of speed and clock
+            self.__index_sprites = self.eatAnim()
+
         self.image = self._sprite_images_vector[int(self.__index_sprites)] #image atribute is necessary for pygame.sprite
         self.rect.center = self.getPosition()
 
+        self.__update_sprite_factor += 1
+
     def eatAnim(self): #animation and effect
+        self.__index_eat += 1
         self.__index_eat %= 3
-        self.__index_eat += 0.2
         return self.__sprite_vector_eat[self.getDirection()][int(self.__index_eat)]
 
     def dieAnim(): #print(self.rect.width)
@@ -110,7 +117,8 @@ class Pacman(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
 
 class Ghost(Characters, GameSprites, pygame.sprite.Sprite): #definir classe
     def __init__(self, ghost_type : int, surf: Surface, sprite_sheet : Surface):
-        self.__x_ghost = surf.get_width()/2
+        pass
+        """ self.__x_ghost = surf.get_width()/2
         self.__y_ghost = surf.get_width()/2
 
 
@@ -143,4 +151,4 @@ class Ghost(Characters, GameSprites, pygame.sprite.Sprite): #definir classe
         pass
 
     def behavior(): #AI control for ghosts https://tateviktome-tovmasyan.medium.com/ai-and-pacman-a-story-of-ghosts-intelligence-d2f296c31675
-        pass
+        pass """
