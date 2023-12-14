@@ -8,7 +8,7 @@ class GameSprites(abc.ABC):
 
     @abc.abstractmethod
     def __init__(self, sprite : Surface,vector_of_initial_positions : list[tuple[int, int]],
-                  sprite_size : tuple[int, int], scale : int=1):
+                  sprite_size : tuple[int, int], scale : float=1.0):
         
         self._to_build_sprite_sheet = sprite
         self._sprite_images_vector = []
@@ -68,38 +68,41 @@ class Characters(abc.ABC): #abstract class
 
 class Pacman(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
     def __init__(self, nickname : str, surf: Surface, sprite_sheet : Surface):
+        
+        self.__has_power = False
+        self.__nickname = nickname
+
         self.__x_pacman = surf.get_width()/2
         self.__y_pacman = surf.get_height()/2 #initial position / TALVEZ APAGAR
 
         Characters.__init__(self, [self.__x_pacman, self.__y_pacman], surf,  10, (244, 206, 14))
 
-        self.__has_power = False
-        self.__nickname = nickname
-
         #****************************REFATORAR************************************
         GameSprites.__init__(self, sprite_sheet, 
                              [(i, j) for i in range(457, 489, 16) for j in range(1, 65, 16)] + [(i, 1) for i in range(489, 681, 16)],
-                             (13, 13), 3
+                             (13, 13), 2
             )
-        
         pygame.sprite.Sprite.__init__(self)
 
         self.index_sprites = 0
         self.image = self._sprite_images_vector[self.index_sprites]
         self.rect = self.image.get_rect()
         self.rect.center = self.__x_pacman, self.__y_pacman
-        print(f"width = {self.rect.width} height = {self.rect.height} center = {self.rect.center}")
 
+        self.__index_eat = 0
+        self.__sprite_vector_eat = [(1, 5, 8, 5), (2, 6, 8, 6), (0, 4, 8, 4), (3, 7, 8, 7)]
 
     def update(self): #update method is necessary for pygame.sprite
-        self.index_sprites %= 19
-        self.index_sprites += 0.5
-        self.image = self._sprite_images_vector[int(self.index_sprites)] #image atribute is necessary for pygame.sprite
+        self.__index_sprites = self.eat()
+        self.image = self._sprite_images_vector[int(self.__index_sprites)] #image atribute is necessary for pygame.sprite
+        self.rect.center = self.getPosition()
 
-    def eat(self):
-        return 
+    def eat(self): #animation and effect
+        self.__index_eat %= 3
+        self.__index_eat += 0.2
+        return self.__sprite_vector_eat[self.getDirection()][int(self.__index_eat)]
 
-    def die():
+    def die(): #print(self.rect.width)
         pass
 
     def incrementPelletsEaten():

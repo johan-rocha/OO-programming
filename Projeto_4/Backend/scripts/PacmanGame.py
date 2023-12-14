@@ -3,7 +3,6 @@ from pygame.locals import *
 from sys import exit
 import os
 from random import randint
-from Game import *
 from Characters import *
 
 main_dir = os.path.dirname(__file__)
@@ -12,11 +11,13 @@ images_dir = os.path.join(main_dir, "images")
 
 pygame.init()
 pygame.font.init()
-width = 640
-height = 480
+width = 452
+height = 516
 
 screen = pygame.display.set_mode((width, height))
+
 pygame.display.set_caption("FGA-PACMAN")
+
 clock = pygame.time.Clock()
 
 
@@ -39,7 +40,7 @@ all_sprites.add(pacman)
 
 while True:
     
-    clock.tick(10) #taxa de atualização
+    clock.tick(20) #taxa de atualização
     screen.fill((0, 0, 0)) #tela preenchida pela cor preta, atualizar tela
     mensagem = f'Score: {score}' #message score text
     texto_formatado = fonte.render(mensagem, True, (255, 255, 255)) #score text
