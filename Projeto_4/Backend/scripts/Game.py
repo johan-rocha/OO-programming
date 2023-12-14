@@ -15,19 +15,16 @@ class Game():
         pygame.init()
         pygame.font.init()
 
-
+        self.__sprite_sheet = os.path.join(constants.IMAGE_DIR, constants.SPRITE_SHEET)
         self.__screen = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
         self.__clock = pygame.time.Clock()
         self._font = pygame.font.SysFont('liberationmono', 30, True, False)#config text
 #verify fonts: pygame.font.get_fonts()
         pygame.display.set_caption("FGA-PACMAN")#ver se esta correto
 
-
-
-
-
+        self.__running = True
         self.__lives = 3
-        self.__pacman = Pacman(nickname, self._screen, self._sprite_sheet) #definir parametros
+        self.__pacman = Pacman(nickname, self.__screen, self.__sprite_sheet) #definir parametros
         self.__pellets = Pellets() #definir parametros
         self.__ghost = [] #configurar primeiro a classe ghost para instanciar
         self.__score = 0
@@ -36,12 +33,21 @@ class Game():
 
     def newGame(self):
         #instancia as classes das sprites
-        self._sprite_sheet = pygame.image.load(os.path.join(constants.IMAGE_DIR, 'pacman_sprite.png')).convert_alpha()
+        self._sprite_sheet = pygame.image.load(os.path.join(constants.IMAGE_DIR, constants.SPRITE_SHEET)).convert_alpha()
 
         self._all_sprites = pygame.sprite.Group()
+        self.startGame()
+    
+    def startGame(self) -> None:
+        self.runGame() # so para testes, arrumar
+
+    def reset(self) -> None:
+        pass
+
+    def gameOver(self) -> None:
+        self.__playing = False
     
     def runGame(self):
-        self.__running = True
         self.__playing = True
         while self.__playing:
             self.__clock.tick(constants.FPS) #frame rate
@@ -52,7 +58,6 @@ class Game():
             pygame.display.flip()
         pygame.quit()
         exit()
-
 
 
     def controls(self) -> None:
@@ -71,22 +76,15 @@ class Game():
                 if event.key == pygame.K_s:
                     self.__pacman.setDirection(3)
 
-            #adicionar algoritmo de controle dos fantasmas
+            #o controle de ghost eh feito pela classe ghost
     
     def itsRunning(self) -> bool:
         return self.__running
 
-
     def pelletsEaten() -> int:
         pass
 
-    def startGame() -> None:
-        pass
-
-    def reset() -> None:
-        pass
-
-    def gameOver() -> None:
+    def waitForUser() -> None:
         pass
     
     def collided() -> bool:
@@ -95,11 +93,14 @@ class Game():
     def eatGhost() -> None:
         pass
     
-    def dead() -> None:
-        pass
+    def dead(self) -> None:
+        if(self.__lives):
+            self.decrementLives()
+        else:
+            self.gameOver()
 
-    def decrementLives() -> None:
-        pass
+    def decrementLives(self) -> None:
+        self.__lives -= 1
 
     def eatPellets() -> None:
         pass
