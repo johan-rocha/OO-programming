@@ -24,7 +24,7 @@ class GameSprites(abc.ABC):
 class Characters(abc.ABC): #abstract class
     
     @abc.abstractmethod
-    def __init__(self, spawn_point : list, surface : Surface, speed=10, direction=-1):
+    def __init__(self, spawn_point : list, surface : Surface, speed=3, direction=-1):
         self.__speed = speed #default
         self.__direction = direction #TALVEZ APAGAR
         self.__coordinates = spawn_point
@@ -70,7 +70,7 @@ class Pacman(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
         self.__x_pacman = surf.get_width()/2
         self.__y_pacman = surf.get_height()/2 #initial position / TALVEZ APAGAR
 
-        Characters.__init__(self, [self.__x_pacman, self.__y_pacman], surf,  10)
+        Characters.__init__(self, [self.__x_pacman, self.__y_pacman], surf,  3)
 
         #****************************REFATORAR************************************
         sprites_initial_points = [(i, j) for i in range(457, 489, 16) for j in range(1, 65, 16)] + [(i, 1) for i in range(489, 681, 16)]
@@ -88,7 +88,7 @@ class Pacman(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
         self.__update_sprite_factor = 0
 
     def update(self): #update method is necessary for pygame.sprite
-        if(not self.__update_sprite_factor % (constants.FACTOR_SPEED_SPRITE * self.getSpeed())): #animation depends of speed and clock
+        if(not self.__update_sprite_factor % round(constants.FACTOR_SPEED_SPRITE * self.getSpeed())): #animation depends of speed and clock
             self.__index_sprites = self.eatAnim()
         self.image = self._sprite_images_vector[int(self.__index_sprites)] #image atribute is necessary for pygame.sprite
         self.rect.center = self.getPosition()
