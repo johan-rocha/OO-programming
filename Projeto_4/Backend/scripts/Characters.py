@@ -2,7 +2,6 @@ import abc #Abstract Base Classes
 import pygame
 from pygame.locals import *
 from pygame.surface import Surface
-from time import sleep
 import constants
 
 class GameSprites(abc.ABC):
@@ -74,9 +73,9 @@ class Pacman(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
         Characters.__init__(self, [self.__x_pacman, self.__y_pacman], surf,  10)
 
         #****************************REFATORAR************************************
-        sprites_initial_positions = [(i, j) for i in range(457, 489, 16) for j in range(1, 65, 16)] + [(i, 1) for i in range(489, 681, 16)]
+        sprites_initial_points = [(i, j) for i in range(457, 489, 16) for j in range(1, 65, 16)] + [(i, 1) for i in range(489, 681, 16)]
 
-        GameSprites.__init__(self, sprite_sheet, sprites_initial_positions, (13, 13), 2)
+        GameSprites.__init__(self, sprite_sheet, sprites_initial_points, (13, 13), 2)
         pygame.sprite.Sprite.__init__(self)
 
         self.index_sprites = 0
@@ -91,10 +90,8 @@ class Pacman(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
     def update(self): #update method is necessary for pygame.sprite
         if(not self.__update_sprite_factor % (constants.FACTOR_SPEED_SPRITE * self.getSpeed())): #animation depends of speed and clock
             self.__index_sprites = self.eatAnim()
-
         self.image = self._sprite_images_vector[int(self.__index_sprites)] #image atribute is necessary for pygame.sprite
         self.rect.center = self.getPosition()
-
         self.__update_sprite_factor += 1
 
     def eatAnim(self): #animation and effect
@@ -115,10 +112,10 @@ class Pacman(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
 
 
 
-class Ghost(Characters, GameSprites, pygame.sprite.Sprite): #definir classe
+class Ghost(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
     def __init__(self, ghost_type : int, surf: Surface, sprite_sheet : Surface):
         pass
-        """ self.__x_ghost = surf.get_width()/2
+        self.__x_ghost = surf.get_width()/2
         self.__y_ghost = surf.get_width()/2
 
 
@@ -127,28 +124,48 @@ class Ghost(Characters, GameSprites, pygame.sprite.Sprite): #definir classe
 
         self.__sprite_vector_killer = []
         self.__sprite_vector_prey = []
-        self.__sprite_vector_dead = []
+        self.__sprite_vector_die = []
         self.__ghost_value = ghost_type
 
         self.setGhostColor(sprite_sheet)
-
         self.setDirection(1) #teste para o fantasma mexer
+
+    def update(self):
+        pass
 
 
     def setGhostColor(self, sprite_sheet):
-        if(self.__ghost_value == constants.CLYDE):
-            pass #GameSprites.__init__(self, sprite_sheet, )
-        elif(self.__ghost_value == constants.INKY):
-            pass #GameSprites.__init__(self, sprite_sheet, )
+        if(self.__ghost_value == constants.BLINKY): 
+            sprites_initial_points = [(i, 65) for i in range(457, 647, 16)] + [(i, 81) for i in range(585, 647)]
         elif(self.__ghost_value == constants.PINKY):
-            pass
-        elif(self.__ghost_value == constants.BLINKY):
-            pass
+            sprites_initial_points = [(i, 81) for i in range(457, 647, 16)] + [(i, 65) for i in range(585, 647)]
+        elif(self.__ghost_value == constants.INKY):
+            sprites_initial_points = [(i, 97) for i in range(457, 585, 16)] + [(i, 65) for i in range(585, 647)] + [(i, 81) for i in range(585, 647)]
+        elif(self.__ghost_value == constants.CLYDE):
+            sprites_initial_points = [(i, 113) for i in range(457, 585, 16)] + [(i, 65) for i in range(585, 647)] + [(i, 81) for i in range(585, 647)]
+
+        GameSprites.__init__(self, sprite_sheet, sprites_initial_points, (14, 14), 2)
+
+    def killerMode():
+        pass
+
+    def killerAnim():
+        pass
+    
+    def preyMode():
+        pass
+
+    def preyAnim():
+        pass
+
+    def dieMode():
+        pass
+
+    def dieAnim():
+        pass
+
     def respawn():
         pass
 
-    def arrayList():
-        pass
-
     def behavior(): #AI control for ghosts https://tateviktome-tovmasyan.medium.com/ai-and-pacman-a-story-of-ghosts-intelligence-d2f296c31675
-        pass """
+        pass

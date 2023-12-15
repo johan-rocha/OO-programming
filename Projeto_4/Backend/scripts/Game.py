@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # _*_ coding: utf-8 _*_
 
-import time #verificar funcionamento dessa funcao
 import pygame
 from Characters import *
 from sys import exit
@@ -17,25 +16,18 @@ class Game():
         
         self.__screen = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
         self.__clock = pygame.time.Clock()
-        self._font = pygame.font.SysFont('liberationmono', 30, True, False)#config text
-#verify fonts: pygame.font.get_fonts()
+        self._font = pygame.font.SysFont('liberationmono', 30, True, False)#config text #verify fonts: pygame.font.get_fonts()
         pygame.display.set_caption("FGA-PACMAN")#ver se esta correto
 
         self._sprite_sheet = pygame.image.load(os.path.join(constants.IMAGE_DIR, constants.SPRITE_SHEET)).convert_alpha()
 
         self.__running = True
-
-
-
-
-
         self.__lives = 3
         self.__pacman = Pacman(nickname, self.__screen, self._sprite_sheet) #definir parametros
         self.__pellets = Pellets() #definir parametros
         self.__ghost = [] #configurar primeiro a classe ghost para instanciar
         self.__score = 0
         self.__timer = 0
-        self.__attribute20 = 0
 
     def newGame(self):
         self._all_sprites = pygame.sprite.Group()

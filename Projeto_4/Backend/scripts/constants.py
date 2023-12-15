@@ -6,7 +6,7 @@ HEIGHT = 516
 
 #FOLDERS
 IMAGE_DIR = os.path.join(os.getcwd(), "images")
-#SOUND_DIR = os.path.dirname(os.getcwd(), "sounds")
+SOUND_DIR = os.path.join(os.getcwd(), "sounds")
 
 #SPRITE SHEET
 SPRITE_SHEET = 'pacman_sprite.png'
@@ -27,4 +27,4 @@ PINKY = 2
 BLINKY = 3
 
 #FACTOR SPEED SPRITE (0.1 -> 0.9)
-FACTOR_SPEED_SPRITE = 0.2 
+FACTOR_SPEED_SPRITE = 0.2
