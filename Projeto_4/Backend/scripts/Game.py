@@ -19,19 +19,20 @@ class Game():
         self._font = pygame.font.SysFont('liberationmono', 30, True, False)#config text #verify fonts: pygame.font.get_fonts()
         pygame.display.set_caption("FGA-PACMAN")#ver se esta correto
 
-        self._sprite_sheet = pygame.image.load(os.path.join(constants.IMAGE_DIR, constants.SPRITE_SHEET)).convert_alpha()
+        self._sprite_sheet = pygame.image.load(os.path.join(constants.IMAGE_DIR, constants.SPRITE_SHEET))
 
         self.__running = True
         self.__lives = 3
         self.__pacman = Pacman(nickname, self.__screen, self._sprite_sheet) #definir parametros
         self.__pellets = Pellets() #definir parametros
-        self.__ghost = [] #configurar primeiro a classe ghost para instanciar
+        self.__ghost = Ghost(constants.INKY, self.__screen, self._sprite_sheet) #transformar em lista
         self.__score = 0
         self.__timer = 0
 
     def newGame(self):
         self._all_sprites = pygame.sprite.Group()
         self._all_sprites.add(self.__pacman)
+        self._all_sprites.add(self.__ghost) #isso esta dando erro
         self.startGame()
     
     def startGame(self) -> None:
@@ -64,13 +65,14 @@ class Game():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
-                    self.__pacman.setDirection(0)
+                    self.__pacman.setDirection(constants.LEFT)
                 if event.key == pygame.K_w:        
-                    self.__pacman.setDirection(1)
+                    self.__pacman.setDirection(constants.UP)
                 if event.key == pygame.K_d:
-                    self.__pacman.setDirection(2)
+                    self.__pacman.setDirection(constants.RIGHT)
+                    self.__ghost.preyMode() #teste
                 if event.key == pygame.K_s:
-                    self.__pacman.setDirection(3)
+                    self.__pacman.setDirection(constants.DOWN)
 
             #o controle de ghost eh feito pela IA
     
@@ -117,8 +119,9 @@ class Game():
 
     def updateObjMovGame(self) -> None:
         self.__pacman.move()
-        for ghost in self.__ghost:
-            pass #ghost.move()
+        self.__ghost.move()
+        """ for ghost in self.__ghost:
+            pass """
 
     def updateTexts(self):
         pass #configurar uma classe para textos e criar um vetor de textos para serem atualizados
