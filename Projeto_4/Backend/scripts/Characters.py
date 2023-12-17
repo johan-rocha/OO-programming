@@ -107,7 +107,7 @@ class Pacman(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
         #****************************REFATORAR************************************
         sprites_initial_points = [(i, j) for i in range(457, 489, 16) for j in range(1, 65, 16)] + [(i, 1) for i in range(489, 681, 16)]
 
-        GameSprites.__init__(self, sprite_sheet, sprites_initial_points, (13, 13), 2)
+        GameSprites.__init__(self, sprite_sheet, sprites_initial_points, (13, 13), constants.SCALE)
         pygame.sprite.Sprite.__init__(self)
 
         self.__has_power = False
@@ -168,7 +168,7 @@ class Ghost(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
         self.__sprite_vector_die_anim = [13, 14, 12, 15]#left, up, right, down
 
         self.setGhostColor(sprite_sheet)
-        self.setDirection(1) #teste para o fantasma mexer
+        self.setDirection(constants.LEFT) #teste para o fantasma mexer
 
         self.__update_sprite_factor = 0
         self.__index_sprites = 0
@@ -212,7 +212,7 @@ class Ghost(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
         elif(self.__ghost_value == constants.CLYDE):
             sprites_initial_points = [(i, 113) for i in range(457, 585, 16)] + [(i, 65) for i in range(585, 647, 16)] + [(i, 81) for i in range(585, 647, 16)]
 
-        GameSprites.__init__(self, sprite_sheet, sprites_initial_points, (14, 14), 2)
+        GameSprites.__init__(self, sprite_sheet, sprites_initial_points, (14, 14), constants.SCALE)
 
     def killerMode(self):
         self.__ghost_state = constants.ALIVE

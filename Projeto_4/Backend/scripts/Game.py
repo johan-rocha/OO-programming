@@ -5,6 +5,7 @@ import pygame
 from Characters import *
 from sys import exit
 import os
+import numpy as np
 import constants
 
 class Game():
@@ -14,7 +15,7 @@ class Game():
         pygame.init()
         pygame.font.init()
         
-        self.__screen = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
+        self.__screen = pygame.display.set_mode((constants.WIDTH*constants.SCALE, constants.HEIGHT*constants.SCALE+constants.SCOREBOARD_RECOIL*constants.SCALE))
         self.__clock = pygame.time.Clock()
         self._font = pygame.font.SysFont('liberationmono', 30, True, False)#config text #verify fonts: pygame.font.get_fonts()
         pygame.display.set_caption("FGA-PACMAN")#ver se esta correto
@@ -32,7 +33,7 @@ class Game():
     def newGame(self):
         self._all_sprites = pygame.sprite.Group()
         self._all_sprites.add(self.__pacman)
-        self._all_sprites.add(self.__ghost) #isso esta dando erro
+        self._all_sprites.add(self.__ghost)
         self.startGame()
     
     def startGame(self) -> None:
@@ -114,6 +115,7 @@ class Game():
 
     def updateSprites(self):
         self.__screen.fill(constants.BLACK)
+        self.backGroundPacman(constants.BACKGROUND_PLAYING)
         self._all_sprites.draw(self.__screen)
         self._all_sprites.update()
 
@@ -126,10 +128,61 @@ class Game():
     def updateTexts(self):
         pass #configurar uma classe para textos e criar um vetor de textos para serem atualizados
 
+    def backGroundPacman(self, mode):
+        if(mode == constants.BACKGROUND_PLAYING):
+            self.__background = self._sprite_sheet.subsurface((228,0), (224, 248))
+        else:
+            self.__background = self._sprite_sheet.subsurface((0,0), (224, 248))
+
+        self.__background = pygame.transform.scale(self.__background, (224*constants.SCALE, 248*constants.SCALE))
+        self.__screen.blit(self.__background, (0,0))
 
 class Pellets(): #definir classe
     def __init__(self):
         pass
+
+class Map(pygame.sprite.Sprite, GameSprites): #modificar para numpy
+    def __init__(self):
+        self.matriz_width = int(constants.WIDTH/4)
+        self.matriz_height = int(constants.HEIGHT/4)
+        self.block = np.ones((int(4 * constants.SCALE), int(4 * constants.SCALE)), dtype=int)
+        self.__matriz_map_colision = np.zeros((self.matriz_height, self.matriz_width), dtype=int)
+        self.initMap()
+
+    def initMap(self):
+        for i in range(20):
+            self.__matriz_map_colision[i, 0] = 1
+            self.__matriz_map_colision[i, self.matriz_width-1] = 1
+
+        for i in range(38, self.matriz_height):
+            self.__matriz_map_colision[i, 0] = 1
+            self.__matriz_map_colision[i, self.matriz_width-1] = 1
+
+        for i in range(20, 26): #correto
+            self.__matriz_map_colision[i, 10] = 1
+            self.__matriz_map_colision[i, (self.matriz_width-1)-10] = 1
+            self.__matriz_map_colision[i+12, 10] = 1 #i + ...
+            self.__matriz_map_colision[i+12, (self.matriz_width-1)-10] = 1
+
+        for j in range(self.matriz_width):
+            self.__matriz_map_colision[0, j] = 1
+            self.__matriz_map_colision[self.matriz_height-1, j] = 1
+
+        for j in range(11): #correto
+            self.__matriz_map_colision[19, j] = 1 #
+            self.__matriz_map_colision[19, (self.matriz_width-1)-j] = 1
+            self.__matriz_map_colision[26, j] = 1 #
+            self.__matriz_map_colision[26, (self.matriz_width-1)-j] = 1
+            self.__matriz_map_colision[31, j] = 1 #
+            self.__matriz_map_colision[31, (self.matriz_width-1)-j] = 1
+            self.__matriz_map_colision[38, j] = 1 #
+            self.__matriz_map_colision[38, (self.matriz_width-1)-j] = 1
+    
+    def checkColision(self, obj_position : tuple[int, int]):
+        pass
+
+
+#map tem que ter o background e as colisoes
 
 """
 obs: quando herdar e o metodo tiver o mesmo nome, inclusive o construtor, deve conter super()
