@@ -341,7 +341,7 @@ class Ghost(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
     def preyMode(self):
         self.__ghost_state = constants.PREY
         self.setSpeed(constants.DEFAULT_SPEED/2)
-        self.__timer.initTimer(8)
+        self.__timer.initTimer(10)
         self.__timer.timer()
         if(self.__timer.timeout()): ##definir o tempo em timer(x)
             self.__ghost_state = constants.ALIVE

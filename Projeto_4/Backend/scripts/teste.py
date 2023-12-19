@@ -1,7 +1,4 @@
-linhas_paralelas = [[11, 11, 89], [43, 11, 106], [67, 11, 42], [163, 11, 26], [67, 75, 26], [91, 75, 40], [115, 0, 77], [139, 75, 40], [163, 11, 90], [187, 11, 18], [187, 51, 64], [211, 11, 42], [211, 75, 26], [235, 11, 106]]
+import pygame
 
-
-for elementos in linhas_paralelas:
-    elementos[2] -= 1
-
-print(linhas_paralelas)
+par = pygame.Rect((0,0), (8,8))
+print(par.center)
