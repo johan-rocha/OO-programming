@@ -14,17 +14,11 @@ def checkColision(obj_position : tuple[int, int]):
         estado_colisao = np.fromfile(file, dtype=int, count=1)
     return estado_colisao.item()
 
+def viewMap():
+    img = Image.new("RGB", (constants.WIDTH*constants.SCALE, constants.HEIGHT*constants.SCALE), (255, 255, 255))
+    for x in range(constants.WIDTH*constants.SCALE):
+        for y in range(constants.HEIGHT*constants.SCALE):
+            if(not checkColision((x, y))):
+                img.putpixel((x,y), (0,0,0))
 
-img = Image.new("RGB", (constants.WIDTH*constants.SCALE, constants.HEIGHT*constants.SCALE), (255, 255, 255))
-
-
-for x in range(constants.WIDTH*constants.SCALE):
-    for y in range(constants.HEIGHT*constants.SCALE):
-        if(not checkColision((x, y))):
-            img.putpixel((x,y), (0,0,0))
-
-
-
-
-
-img.save("output.jpg")
+    img.save("output.jpg")

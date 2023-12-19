@@ -1,5 +1,6 @@
 import numpy as np
 import constants
+import viewMap
 
 
 
@@ -66,3 +67,5 @@ if(checkColision((posicao_linha, posicao_coluna))):
     print("verificador 2 = COLISAO")
 else:
     print("verificador 2 = NAO COLIDIU PORA")
+
+viewMap.viewMap()
