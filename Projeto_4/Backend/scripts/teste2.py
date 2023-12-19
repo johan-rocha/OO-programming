@@ -3,7 +3,7 @@ import constants
 
 
 
-SCALE = 1 #trabalharei com essa escala fixa
+SCALE = 2 #trabalharei com essa escala fixa
 
 matriz_width = int(constants.WIDTH*SCALE)
 matriz_height = int(constants.HEIGHT*SCALE)
@@ -30,11 +30,13 @@ for coluna in colunas_paralelas:
 # Define as linhas
 
 for linha, inicio, comprimento in linhas_paralelas:
+    comprimento -= 1 #definir proporcao -> comprimento da linha/comprimento da tela
     matriz[linha, inicio:(inicio + comprimento)] = 0
     matriz[linha, (matriz_width - inicio - comprimento):(matriz_width - inicio)] = 0
 
 # Define as colunas da matriz e linhas do jogo
 for inicio, coluna, comprimento in colunas_paralelas:
+    comprimento -= 2
     matriz[inicio:(inicio + comprimento), coluna] = 0
     matriz[inicio:(inicio + comprimento), (matriz_width - coluna - 1)] = 0
 
@@ -56,9 +58,8 @@ def checkColision(obj_position : tuple[int, int]):
         estado_colisao = np.fromfile(file, dtype=int, count=1)
     return estado_colisao.item()
 
-
-posicao_coluna = 93
-posicao_linha = 11
+posicao_coluna = 422
+posicao_linha = 22
 
 
 if(checkColision((posicao_linha, posicao_coluna))):

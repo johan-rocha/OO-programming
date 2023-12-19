@@ -79,7 +79,7 @@ class Characters(abc.ABC): #abstract class
         self.__speed = speed #default
         self.__direction = direction
         self.__next_direction = direction
-        self.__collided = False
+        self._collided = False
         self.__coordinates = spawn_point
         self.__surface = surface
         self.ref_geometry = None #muito provavel de apagar
@@ -95,8 +95,11 @@ class Characters(abc.ABC): #abstract class
             self.__coordinates[0] += self.__speed
         elif(self.__direction == constants.DOWN):
             self.__coordinates[1] += self.__speed
-        self.__coordinates[0] %= self.__surface.get_width() #teleport character
-        self.__coordinates[1] %= self.__surface.get_height()
+
+        if(self.__coordinates[0] >= self.__surface.get_width()-1): #teleport character
+            self.__coordinates[0] = 1
+        elif(self.__coordinates[0] <= 1): #teleport character
+            self.__coordinates[0] = self.__surface.get_width()-1
 
     #ver como funciona, usando como exemplo
     def setSpeed(self, speed=constants.DEFAULT_SPEED):
@@ -113,43 +116,33 @@ class Characters(abc.ABC): #abstract class
     
     def _verifyDirection(self, left, up, right, down, center):
     #testa os sentidos e sua colisoes para ver a borda para teste de colisao adequada
-        temp_a, temp_b = right 
+        
+        temp_a, temp_b = right #pygame rect midtop offset
         temp_a -= 1
         right = (temp_a, temp_b)
         temp_a, temp_b = down
         temp_b -= 1
         down = (temp_a, temp_b)
-        print(up) # apagar
-        print(center)
-        print(down)
 
-        if(not self.__collided):
+        if(not self._collided):
             if(self.__direction == -1):
                 pass
             elif(self.__direction == constants.LEFT):
                 if(self.checkColision(left)):
-                    print(f"COLIDIU EM {left}")
-                    print(f"center = {center}")
                     self.__direction = -1
-                    self.__collided = True
+                    self._collided = True
             elif(self.__direction == constants.UP):
                 if(self.checkColision(up)):
-                    print(f"COLIDIU EM {up}")
-                    print(f"center = {center}")
                     self.__direction = -1
-                    self.__collided = True
+                    self._collided = True
             elif(self.__direction == constants.RIGHT):
                 if(self.checkColision(right)):
-                    print(f"COLIDIU EM {right}")
-                    print(f"center = {center}")
                     self.__direction = -1
-                    self.__collided = True
+                    self._collided = True
             elif(self.__direction == constants.DOWN):
                 if(self.checkColision(down)):
-                    print(f"COLIDIU EM {down}")
-                    print(f"center = {center}")
                     self.__direction = -1
-                    self.__collided = True
+                    self._collided = True
 
         if(self.__next_direction == -1):
             pass
@@ -158,25 +151,25 @@ class Characters(abc.ABC): #abstract class
                 pass
             else:
                 self.__direction = self.__next_direction
-                self.__collided = False
+                self._collided = False
         elif(self.__next_direction == constants.UP):
             if(self.checkColision(up)):
                 pass
             else:
                 self.__direction = self.__next_direction
-                self.__collided = False
+                self._collided = False
         elif(self.__next_direction == constants.RIGHT):
             if(self.checkColision(right)):
                 pass
             else:
                 self.__direction = self.__next_direction
-                self.__collided = False
+                self._collided = False
         elif(self.__next_direction == constants.DOWN):
             if(self.checkColision(down)):
                 pass
             else:
                 self.__direction = self.__next_direction
-                self.__collided = False
+                self._collided = False
     #se colidir
         #se esta no sentido que ja estava, para (setDiretion -1)
         #senao, não faz nada
@@ -193,7 +186,7 @@ class Characters(abc.ABC): #abstract class
         with open("map.bin", 'rb') as file:
             file.seek(byte_offset)
             estado_colisao = np.fromfile(file, dtype=int, count=1)
-        return estado_colisao
+        return estado_colisao.item()
     
 
 
@@ -227,17 +220,18 @@ class Pacman(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
         self.image = self._sprite_images_vector[self.__index_sprites]
         self.rect = self.image.get_rect()
         self.rect.center = self.__x_pacman, self.__y_pacman
-        self.b_box_colision = pygame.Rect(0,0,3,3) # FOR TEST
+        self.b_box_colision = pygame.Rect(0,0,3,3)
         self.b_box_colision.center = self.rect.center
 
     def update(self): #update method is necessary for pygame.sprite
         if(not self.__update_sprite_factor % round(constants.FACTOR_SPEED_SPRITE_PACMAN * self.getSpeed())): #animation depends of speed and clock
             self.__update_sprite_factor = 0
-            self.__index_sprites = self.eatAnim()
+            if(not self._collided):
+                self.__index_sprites = self.eatAnim()
 
         self.image = self._sprite_images_vector[self.__index_sprites] #image atribute is necessary for pygame.sprite #tirei o int do self.__index_sprites
         self.rect.center = self.getPosition()
-        self.b_box_colision.center = self.rect.center #FOR TEST
+        self.b_box_colision.center = self.rect.center
         self._verifyDirection(self.b_box_colision.midleft, self.b_box_colision.midtop, self.b_box_colision.midright, self.b_box_colision.midbottom, self.b_box_colision.center)
         self.__update_sprite_factor += 1
 
@@ -298,6 +292,8 @@ class Ghost(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
         self.image = self._sprite_images_vector[self.__index_sprites]
         self.rect = self.image.get_rect()
         self.rect.center = self.__x_ghost, self.__y_ghost
+        self.b_box_colision = pygame.Rect(0,0,3,3)
+        self.b_box_colision.center = self.rect.center
 
     def update(self):
         if(not self.__update_sprite_factor % round(constants.FACTOR_SPEED_SPRITE_GHOST * self.getSpeed())):
@@ -318,6 +314,8 @@ class Ghost(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
         
         self.image = self._sprite_images_vector[self.__index_sprites]
         self.rect.center = self.getPosition()
+        self.b_box_colision.center = self.rect.center
+        self._verifyDirection(self.b_box_colision.midleft, self.b_box_colision.midtop, self.b_box_colision.midright, self.b_box_colision.midbottom, self.b_box_colision.center)
         self.__update_sprite_factor += 1
         self.behavior()
 

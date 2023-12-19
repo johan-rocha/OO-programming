@@ -18,8 +18,8 @@ def checkColision(obj_position : tuple[int, int]):
 img = Image.new("RGB", (constants.WIDTH*constants.SCALE, constants.HEIGHT*constants.SCALE), (255, 255, 255))
 
 
-for x in range(constants.WIDTH):
-    for y in range(constants.HEIGHT):
+for x in range(constants.WIDTH*constants.SCALE):
+    for y in range(constants.HEIGHT*constants.SCALE):
         if(not checkColision((x, y))):
             img.putpixel((x,y), (0,0,0))
 
