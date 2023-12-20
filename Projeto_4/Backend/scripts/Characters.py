@@ -15,7 +15,7 @@ class Timer():
         self.__timer_set = 0
 
 
-    def initTimer(self, range_in_seconds):
+    def initTimer(self, range_in_seconds): #consertar timer
         if(self.__timer_on):
             pass
         else:
@@ -112,7 +112,10 @@ class Characters(abc.ABC): #abstract class
         return self.__direction
     
     def setDirection(self, value): #seta a proxima direcao a ser seguida
-        self.__next_direction = value
+        if(value == -1):
+            self.__direction = value
+        else:
+            self.__next_direction = value
     
     def _verifyDirection(self, left, up, right, down, center):
     #testa os sentidos e sua colisoes para ver a borda para teste de colisao adequada
@@ -178,6 +181,9 @@ class Characters(abc.ABC): #abstract class
     def getPosition(self):
         return self.__coordinates[0], self.__coordinates[1]
     
+    def setPosition(self, coord : tuple[int, int]):
+        self.__coordinates = list(coord)
+    
     def checkColision(self, obj_position : tuple[int, int]): #model pygame -> (column, row)
         col, row = int(obj_position[0]), (obj_position[1])
         position = int(row * constants.WIDTH*constants.SCALE + col)
@@ -211,10 +217,14 @@ class Pacman(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
 
         self.__has_power = False
         self.__nickname = nickname
+        self.__isdead = False
         self.__sprite_vector_eat = [(1, 5, 8, 5), (2, 6, 8, 6), (0, 4, 8, 4), (3, 7, 8, 7)]
+        self.__sprite_vector_die = [i for i in range(8, 20)]
+        self.__timer = Timer()
 
         self.__index_sprites = 0
-        self.__index_eat_anim = 0
+        self.__index_eat_anim = 0  
+        self.__index_die_anim = 0
         self.__update_sprite_factor = 0
 
         self.image = self._sprite_images_vector[self.__index_sprites]
@@ -226,28 +236,55 @@ class Pacman(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
     def update(self): #update method is necessary for pygame.sprite
         if(not self.__update_sprite_factor % round(constants.FACTOR_SPEED_SPRITE_PACMAN * self.getSpeed())): #animation depends of speed and clock
             self.__update_sprite_factor = 0
-            if(not self._collided):
-                self.__index_sprites = self.eatAnim()
+            if(not self.__isdead):
+                if(not self._collided):
+                    self.__index_sprites = self.eatAnim()
+            else:
+                self.__index_sprites = self.dieAnim()
 
         self.image = self._sprite_images_vector[self.__index_sprites] #image atribute is necessary for pygame.sprite #tirei o int do self.__index_sprites
         self.rect.center = self.getPosition()
         self.b_box_colision.center = self.rect.center
         self._verifyDirection(self.b_box_colision.midleft, self.b_box_colision.midtop, self.b_box_colision.midright, self.b_box_colision.midbottom, self.b_box_colision.center)
         self.__update_sprite_factor += 1
+    
+    def eatMode(self):
+        self.__isdead = False
 
     def eatAnim(self): #animation and effect
         self.__index_eat_anim += 1
         self.__index_eat_anim %= 3
         return self.__sprite_vector_eat[self.getDirection()][int(self.__index_eat_anim)]
 
-    def dieAnim(): #print(self.rect.width)
-        pass
+    def dieMode(self):
+        self.__isdead = True
+        self.dieAnim()
+
+    def dieAnim(self): #print(self.rect.width)
+        if(self.__index_die_anim < 11):
+            self.__index_die_anim += 0.2
+        else:
+            time.sleep(4)
+
+        return self.__sprite_vector_die[int(self.__index_die_anim)]
+
+
+    def getPacmanIsDead(self):
+        return self.__isdead
 
     def incrementPelletsEaten():
         pass
 
-    def defineHasPower():
-        pass
+    def defineHasPower(self):
+        self.__has_power = True
+        self.__timer.initTimer(10)
+        self.__timer.timer()
+        if(self.__timer.timeout()): ##definir o tempo em timer(x)
+            self.__has_power = False
+    
+    def getHasPower(self):
+        return self.__has_power
+    
 
 
 
@@ -267,8 +304,8 @@ class Ghost(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
 
     def __init__(self, ghost_type : int, surf: Surface, sprite_sheet : Surface):
         pass
-        self.__x_ghost = surf.get_width()/2
-        self.__y_ghost = surf.get_width()/2
+        self.__x_ghost = 111*constants.SCALE
+        self.__y_ghost = 91*constants.SCALE
 
 
         Characters.__init__(self, [self.__x_ghost, self.__y_ghost], surf,  constants.DEFAULT_SPEED)
@@ -282,7 +319,6 @@ class Ghost(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
         self.__sprite_vector_die_anim = [13, 14, 12, 15]#left, up, right, down
 
         self.setGhostColor(sprite_sheet)
-        self.setDirection(constants.LEFT) #teste para o fantasma mexer
 
         self.__update_sprite_factor = 0
         self.__index_sprites = 0
@@ -367,6 +403,9 @@ class Ghost(pygame.sprite.Sprite, Characters, GameSprites): #definir classe
 
     def dieAnim(self):
         return self.__sprite_vector_die_anim[self.getDirection()]
+    
+    def getGhostState(self):
+        return self.__ghost_state
 
     def respawn(self):
         pass

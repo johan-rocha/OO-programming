@@ -24,16 +24,27 @@ class Game():
 
         self.__running = True
         self.__lives = 3
-        self.__pacman = Pacman(nickname, self.__screen, self._sprite_sheet) #definir parametros
+        self.__pacman = Pacman("Johan", self.__screen, self._sprite_sheet) #definir parametros
         self.__pellets = Pellets() #definir parametros
-        self.__ghost = Ghost(constants.INKY, self.__screen, self._sprite_sheet) #transformar em lista
+        self.__ghost = []
+        self.__ghost.append(Ghost(constants.CLYDE, self.__screen, self._sprite_sheet))
+        self.__ghost.append(Ghost(constants.INKY, self.__screen, self._sprite_sheet))
+        self.__ghost.append(Ghost(constants.PINKY, self.__screen, self._sprite_sheet))
+        self.__ghost.append(Ghost(constants.BLINKY, self.__screen, self._sprite_sheet))
         self.__score = 0
         self.__timer = 0
 
     def newGame(self):
-        self._all_sprites = pygame.sprite.Group()
-        self._all_sprites.add(self.__pacman)
-        self._all_sprites.add(self.__ghost)
+        self._ghosts_sprites = pygame.sprite.Group()
+
+        count = 90*constants.SCALE
+        for ghost in self.__ghost:
+            self._ghosts_sprites.add(ghost)
+            ghost.setPosition((count ,91*constants.SCALE))
+            count += 18*constants.SCALE
+
+        self._pacman_sprites = pygame.sprite.Group()
+        self._pacman_sprites.add(self.__pacman)
         self.__pellets.setPellets()
         self.startGame()
     
@@ -45,6 +56,7 @@ class Game():
 
     def gameOver(self) -> None:
         self.__playing = False
+        print("GAME OVER!")
     
     def runGame(self):
         self.__playing = True
@@ -52,8 +64,9 @@ class Game():
             self.__clock.tick(constants.FPS) #frame rate
             self.controls()
             self.updateObjMovGame()
+            self.ghostCollided()
             self.updateSprites()
-            pygame.draw.rect(self.__screen, constants.RED, self.__pacman.b_box_colision, 2) #FOR TEST
+            #pygame.draw.rect(self.__screen, constants.RED, self.__pacman.b_box_colision, 2) #FOR TEST
             self.updateTexts()
             pygame.display.flip()
         pygame.quit()
@@ -66,15 +79,25 @@ class Game():
                 self.__playing = False
                 self.__running = False
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
-                    self.__pacman.setDirection(constants.LEFT)
-                if event.key == pygame.K_w:        
-                    self.__pacman.setDirection(constants.UP)
-                if event.key == pygame.K_d:
-                    self.__pacman.setDirection(constants.RIGHT)
-                if event.key == pygame.K_s:
-                    self.__pacman.setDirection(constants.DOWN)
+            if(not self.__pacman.getPacmanIsDead()):
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_a:
+                        self.__ghost[0].setDirection(constants.LEFT)
+                    if event.key == pygame.K_w:        
+                        self.__ghost[0].setDirection(constants.UP)
+                    if event.key == pygame.K_d:
+                        self.__ghost[0].setDirection(constants.RIGHT)
+                    if event.key == pygame.K_s:
+                        self.__ghost[0].setDirection(constants.DOWN)
+
+                    if event.key == pygame.K_LEFT:
+                        self.__pacman.setDirection(constants.LEFT)
+                    if event.key == pygame.K_UP:        
+                        self.__pacman.setDirection(constants.UP)
+                    if event.key == pygame.K_RIGHT:
+                        self.__pacman.setDirection(constants.RIGHT)
+                    if event.key == pygame.K_DOWN:
+                        self.__pacman.setDirection(constants.DOWN)
 
             #o controle de ghost eh feito pela IA
     
@@ -85,13 +108,18 @@ class Game():
         for pellet in self.__pellets.objs:
             pygame.draw.rect(self.__screen, constants.PINK, pellet, 2)
             if(pellet.colliderect(self.__pacman.rect)):
-                self.__score += 10 #colocar som comendo aqui
+                if(not self.__pacman.getHasPower()):
+                    self.__score += 10 
+                else:
+                    self.__score += 20#colocar som comendo aqui
                 self.__pellets.objs.remove(pellet)
                 continue
         for power in self.__pellets.powerObjs:
             pygame.draw.rect(self.__screen, constants.PINK, power, 0)
             if(power.colliderect(self.__pacman.rect)):
-                self.__ghost.preyMode()
+                for ghost in self.__ghost:
+                    ghost.preyMode()
+                self.__pacman.defineHasPower()
                 self.__score += 20 #colocar som comendo aqui
                 self.__pellets.powerObjs.remove(power)
                 continue
@@ -99,22 +127,45 @@ class Game():
     def waitForUser() -> None:
         pass
     
-    def collided() -> bool:
-        pass
-
-    def eatGhost() -> None:
-        pass
+    def ghostCollided(self) -> bool:
+        for ghost in self.__ghost:        
+            if(pygame.sprite.spritecollide(self.__pacman, self._ghosts_sprites, False)):
+                #se ghost_state = ALIVE -> pacman morre
+                #se ghost_state = PREY -> aumenta 2000 pontos e o ghost morre (eatGhost)
+                if(ghost.getGhostState() == constants.ALIVE and
+                (not self.__pacman.getPacmanIsDead())):
+                    self.dead()
+                    return True
     
     def dead(self) -> None:
         if(self.__lives):
+            #jogo para
             self.decrementLives()
+            self.__pacman.dieMode()
+            self.__pacman.setDirection(-1)
+            for ghost in self.__ghost:
+                ghost.setDirection(-1)
+            self.respawn()
+            #voltam para posicao inicial
         else:
-            self.gameOver()
+            pass
+            self.gameOver() #consertar, tá colidindo varias vezes e chamando gameover
 
     def decrementLives(self) -> None:
         self.__lives -= 1
+
+    def eatGhost() -> None:
+        pass
+
+    def respawn(self):
+        self.__pacman.setPosition((112*constants.SCALE, 139*constants.SCALE))
+        count = 90*constants.SCALE
+        for ghost in self.__ghost:
+            ghost.setPosition((count ,91*constants.SCALE))
+            count += 18*constants.SCALE
+        self.__pacman.eatMode()
     
-    def incrementPelletsEaten() -> None:
+    def incrementPelletsEaten() -> None: #serve para verificar se o jogador venceu o jogo
         pass
 
     def getScore() -> int:
@@ -127,17 +178,22 @@ class Game():
         self.__screen.fill(constants.BLACK)
         self.backGroundPacman(constants.BACKGROUND_PLAYING)
         self.pelletsEaten()
-        self._all_sprites.draw(self.__screen)
-        self._all_sprites.update()
+        self._pacman_sprites.draw(self.__screen)
+        self._ghosts_sprites.draw(self.__screen)
+        self._pacman_sprites.update()
+        self._ghosts_sprites.update()
 
     def updateObjMovGame(self) -> None:
         self.__pacman.move()
-        self.__ghost.move()
-        """ for ghost in self.__ghost:
-            pass """
+        for ghost in self.__ghost:
+            ghost.move()
 
     def updateTexts(self):
-        pass #configurar uma classe para textos e criar um vetor de textos para serem atualizados
+        message = f"SCORE = {self.__score}"
+        formated_message = self._font.render(message, True, (255, 255, 255))
+        self.__screen.blit(formated_message, 
+                           (22*constants.SCALE, 248*constants.SCALE + 30*constants.SCALE)
+                           )
 
     def backGroundPacman(self, mode):
         if(mode == constants.BACKGROUND_PLAYING):
